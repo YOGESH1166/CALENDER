@@ -1,0 +1,407 @@
+.dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--space-lg);
+    animation: fadeIn var(--transition-base) ease;
+}
+
+/* --- Header --- */
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-lg);
+}
+
+.dashboard-header h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.dash-accent {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+.header-info .info-item {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.header-info .info-value {
+    font-weight: 700;
+    color: var(--accent-indigo-light);
+}
+
+.year-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.year-selector button {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--radius-full);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.year-selector button:hover {
+    background: var(--bg-glass-hover);
+    color: var(--text-primary);
+}
+
+.year-selector span {
+    font-size: 0.95rem;
+    font-weight: 700;
+    min-width: 48px;
+    text-align: center;
+}
+
+/* --- Top Grid: Status + Available Days --- */
+.top-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    align-items: start;
+}
+
+/* --- Section Titles --- */
+.section-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-sm);
+}
+
+/* --- Data Tables (Spreadsheet Style) --- */
+.spreadsheet {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+}
+
+.spreadsheet th,
+.spreadsheet td {
+    padding: 5px 10px;
+    text-align: center;
+    border: 1px solid var(--border-subtle);
+    white-space: nowrap;
+}
+
+.spreadsheet th {
+    font-weight: 700;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Column group header colors */
+.spreadsheet th.hdr-past {
+    background: #e07c3a;
+    color: white;
+}
+
+.spreadsheet th.hdr-current {
+    background: #4a90d9;
+    color: white;
+}
+
+.spreadsheet th.hdr-future {
+    background: #5bb85b;
+    color: white;
+}
+
+/* Sub-headers */
+.spreadsheet th.sub-online {
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--accent-indigo-light);
+    font-size: 0.65rem;
+}
+
+.spreadsheet th.sub-inperson {
+    background: rgba(52, 211, 153, 0.12);
+    color: var(--accent-emerald);
+    font-size: 0.65rem;
+}
+
+.spreadsheet th.sub-total {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
+    font-size: 0.65rem;
+}
+
+.spreadsheet td {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.spreadsheet td.label-cell {
+    text-align: left;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+}
+
+.spreadsheet td.val-online {
+    color: var(--accent-indigo-light);
+}
+
+.spreadsheet td.val-inperson {
+    color: var(--accent-emerald);
+}
+
+.spreadsheet td.val-total {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.spreadsheet tr.totals-row td {
+    font-weight: 700;
+    background: rgba(99, 102, 241, 0.06);
+    border-top: 2px solid var(--accent-indigo);
+}
+
+/* Available Days table */
+.spreadsheet th.hdr-avail {
+    background: #e07c3a;
+    color: white;
+}
+
+.spreadsheet td.val-avail {
+    color: var(--accent-amber);
+    font-weight: 600;
+}
+
+/* --- Bottom Grid: Booked Count + Daily + Available Dates --- */
+.bottom-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    align-items: start;
+}
+
+/* --- Daily by Month — horizontal layout --- */
+.daily-section {
+    display: flex;
+    gap: var(--space-md);
+    overflow-x: auto;
+}
+
+.daily-month-col {
+    min-width: 160px;
+}
+
+.daily-month-col .month-header {
+    padding: 4px 10px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    margin-bottom: 0;
+}
+
+.daily-month-col.jan .month-header {
+    background: #4a90d9;
+    color: white;
+}
+
+.daily-month-col.feb .month-header {
+    background: #e07c3a;
+    color: white;
+}
+
+.daily-month-col.mar .month-header {
+    background: #5bb85b;
+    color: white;
+}
+
+.daily-month-col.apr .month-header {
+    background: #9b59b6;
+    color: white;
+}
+
+.daily-month-col.may .month-header {
+    background: #e74c3c;
+    color: white;
+}
+
+.daily-month-col.jun .month-header {
+    background: #1abc9c;
+    color: white;
+}
+
+.daily-month-col.jul .month-header {
+    background: #f39c12;
+    color: white;
+}
+
+.daily-month-col.aug .month-header {
+    background: #2ecc71;
+    color: white;
+}
+
+.daily-month-col.sep .month-header {
+    background: #3498db;
+    color: white;
+}
+
+.daily-month-col.oct .month-header {
+    background: #e67e22;
+    color: white;
+}
+
+.daily-month-col.nov .month-header {
+    background: #8e44ad;
+    color: white;
+}
+
+.daily-month-col.dec .month-header {
+    background: #c0392b;
+    color: white;
+}
+
+.daily-month-col .spreadsheet {
+    font-size: 0.72rem;
+}
+
+/* Available dates */
+.avail-dates-section {
+    display: flex;
+    gap: var(--space-md);
+    overflow-x: auto;
+}
+
+.avail-month-col {
+    min-width: 100px;
+}
+
+.avail-month-col .month-header {
+    padding: 4px 10px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.avail-month-col.jan .month-header {
+    background: #4a90d9;
+    color: white;
+}
+
+.avail-month-col.feb .month-header {
+    background: #e07c3a;
+    color: white;
+}
+
+.avail-month-col.mar .month-header {
+    background: #5bb85b;
+    color: white;
+}
+
+.avail-month-col.apr .month-header {
+    background: #9b59b6;
+    color: white;
+}
+
+.avail-month-col.may .month-header {
+    background: #e74c3c;
+    color: white;
+}
+
+.avail-month-col.jun .month-header {
+    background: #1abc9c;
+    color: white;
+}
+
+.avail-month-col .spreadsheet {
+    font-size: 0.72rem;
+}
+
+/* Loading */
+.dashboard .loading-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2xl);
+    color: var(--text-muted);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* --- Schedule Details Table --- */
+.schedule-details-table {
+    font-size: 0.75rem;
+}
+
+.schedule-details-table tbody tr:hover td {
+    background: var(--bg-glass-hover);
+}
+
+/* --- Status Badges --- */
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.65rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-not-started {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--accent-amber);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.status-in-progress {
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--accent-indigo-light);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.status-completed {
+    background: rgba(52, 211, 153, 0.15);
+    color: var(--accent-emerald);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.status-cancelled {
+    background: rgba(251, 113, 133, 0.15);
+    color: var(--accent-rose);
+    border: 1px solid rgba(251, 113, 133, 0.3);
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+    .top-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}

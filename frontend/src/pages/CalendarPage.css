@@ -1,0 +1,65 @@
+.calendar-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-lg);
+    animation: fadeIn var(--transition-base) ease;
+}
+
+.page-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-xl);
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.page-title h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.page-title .title-accent {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-title .title-icon {
+    font-size: 1.4rem;
+}
+
+.page-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.notification-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    background: rgba(34, 211, 238, 0.1);
+    border: 1px solid rgba(34, 211, 238, 0.2);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    color: var(--accent-cyan);
+}
+
+/* Loading overlay */
+.loading-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2xl);
+    color: var(--text-muted);
+    gap: var(--space-sm);
+    animation: pulse 1.5s ease-in-out infinite;
+}

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import VoiceButton from './VoiceButton';
+import { getRingtones, previewRingtone } from '../utils/ringtones';
 import './TaskModal.css';
 
 const emptyForm = {
@@ -9,12 +10,14 @@ const emptyForm = {
     status: 'Not Started',
     mode: 'Online',
     reminder_minutes: 0,
+    ringtone_id: 1,
 };
 
 export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedDate, editingSchedule }) {
     const [form, setForm] = useState(emptyForm);
     const [transcript, setTranscript] = useState('');
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const stopPreviewRef = useRef(null);
 
     useEffect(() => {
         if (editingSchedule) {
@@ -27,6 +30,7 @@ export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedD
                 status: editingSchedule.status,
                 mode: editingSchedule.mode,
                 reminder_minutes: editingSchedule.reminder_minutes || 0,
+                ringtone_id: editingSchedule.ringtone_id || 1,
             });
             setTranscript('');
         } else {
@@ -68,6 +72,7 @@ export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedD
             status: form.status,
             mode: form.mode,
             reminder_minutes: Number(form.reminder_minutes) || 0,
+            ringtone_id: Number(form.ringtone_id) || 1,
         };
 
         onSave(payload, editingSchedule?.id);
@@ -179,6 +184,35 @@ export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedD
                             <option value={60}>1 hour before</option>
                         </select>
                     </div>
+
+                    {/* Ringtone */}
+                    {Number(form.reminder_minutes) > 0 && (
+                        <div className="form-group">
+                            <label>🎵 Alarm Ringtone</label>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <select
+                                    value={form.ringtone_id}
+                                    onChange={handleChange('ringtone_id')}
+                                    style={{ flex: 1 }}
+                                >
+                                    {getRingtones().map((r) => (
+                                        <option key={r.id} value={r.id}>{r.name}</option>
+                                    ))}
+                                </select>
+                                <button
+                                    type="button"
+                                    className="btn-preview"
+                                    onClick={() => {
+                                        if (stopPreviewRef.current) stopPreviewRef.current();
+                                        stopPreviewRef.current = previewRingtone(Number(form.ringtone_id));
+                                    }}
+                                    title="Preview ringtone"
+                                >
+                                    ▶️
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Status (for editing) */}
                     {editingSchedule && (

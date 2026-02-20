@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
+import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
 import CalendarPage from './pages/CalendarPage';
 import Dashboard from './pages/Dashboard';
 import { initNotifications } from './utils/notificationManager';
@@ -67,7 +67,7 @@ export default function App() {
   }, []);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <NavBar />
       <main style={{ flex: 1 }}>
         <Routes>
@@ -75,6 +75,6 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </main>
-    </BrowserRouter>
+    </HashRouter>
   );
 }

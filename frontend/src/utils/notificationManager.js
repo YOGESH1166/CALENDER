@@ -1,7 +1,10 @@
 /**
  * Notification Manager — handles browser notification reminders for schedules.
  * Checks every 30 seconds if any upcoming schedule needs a reminder.
+ * Plays alarm ringtone when reminder fires.
  */
+
+import { playRingtone } from './ringtones';
 
 const STORAGE_KEY = 'cal_schedules';
 const NOTIFIED_KEY = 'cal_notified_ids';
@@ -45,7 +48,6 @@ function getNotifiedIds() {
 function addNotifiedId(id) {
     const ids = getNotifiedIds();
     ids.push(id);
-    // Keep only last 500 IDs
     if (ids.length > 500) ids.splice(0, ids.length - 500);
     localStorage.setItem(NOTIFIED_KEY, JSON.stringify(ids));
 }
@@ -65,11 +67,10 @@ function checkReminders() {
         const startTime = new Date(s.start_time);
         const reminderTime = new Date(startTime.getTime() - s.reminder_minutes * 60 * 1000);
 
-        // Unique key: schedule id + date (so we don't re-notify)
         const notifyKey = `${s.id}_${s.start_time}`;
         if (notifiedIds.includes(notifyKey)) return;
 
-        // Check if we're within the reminder window (reminder time <= now < start time)
+        // Check if we're within the reminder window
         const diffMs = reminderTime.getTime() - now.getTime();
         if (diffMs <= 0 && now < startTime) {
             fireNotification(s);
@@ -78,7 +79,7 @@ function checkReminders() {
     });
 }
 
-/** Fire a browser notification */
+/** Fire a browser notification AND play alarm ringtone */
 function fireNotification(schedule) {
     const startTime = new Date(schedule.start_time);
     const timeStr = `${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
@@ -87,8 +88,11 @@ function fireNotification(schedule) {
     const title = `⏰ Reminder: ${schedule.task_name}`;
     const body = `${modeIcon} ${schedule.mode} at ${timeStr}\nStarting in ${schedule.reminder_minutes} min`;
 
+    // 🔊 Play the alarm ringtone
+    const ringtoneId = schedule.ringtone_id || 1;
+    playRingtone(ringtoneId, 3); // Play 3 times
+
     try {
-        // Try service worker notification (works in background)
         if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
             navigator.serviceWorker.ready.then((reg) => {
                 reg.showNotification(title, {
@@ -96,13 +100,12 @@ function fireNotification(schedule) {
                     icon: '/icon.svg',
                     badge: '/icon.svg',
                     tag: schedule.id,
-                    vibrate: [200, 100, 200],
+                    vibrate: [200, 100, 200, 100, 200],
                     requireInteraction: true,
                     data: { url: '/' },
                 });
             });
         } else {
-            // Fallback to regular notification
             new Notification(title, {
                 body,
                 icon: '/icon.svg',
@@ -117,9 +120,7 @@ function fireNotification(schedule) {
 /** Start the periodic reminder check */
 function startReminderCheck() {
     if (checkInterval) return;
-    // Check every 30 seconds
     checkInterval = setInterval(checkReminders, 30 * 1000);
-    // Also check immediately
     checkReminders();
 }
 

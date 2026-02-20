@@ -8,6 +8,7 @@ const emptyForm = {
     end_time_h: '',
     status: 'Not Started',
     mode: 'Online',
+    reminder_minutes: 0,
 };
 
 export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedDate, editingSchedule }) {
@@ -25,6 +26,7 @@ export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedD
                 end_time_h: `${String(end.getHours()).padStart(2, '0')}:${String(end.getMinutes()).padStart(2, '0')}`,
                 status: editingSchedule.status,
                 mode: editingSchedule.mode,
+                reminder_minutes: editingSchedule.reminder_minutes || 0,
             });
             setTranscript('');
         } else {
@@ -65,6 +67,7 @@ export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedD
             end_time: `${dateStr}T${form.end_time_h}:00`,
             status: form.status,
             mode: form.mode,
+            reminder_minutes: Number(form.reminder_minutes) || 0,
         };
 
         onSave(payload, editingSchedule?.id);
@@ -162,6 +165,19 @@ export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedD
                                 🏢 In-Person
                             </button>
                         </div>
+                    </div>
+
+                    {/* Reminder */}
+                    <div className="form-group">
+                        <label>🔔 Reminder</label>
+                        <select value={form.reminder_minutes} onChange={handleChange('reminder_minutes')}>
+                            <option value={0}>None</option>
+                            <option value={5}>5 minutes before</option>
+                            <option value={10}>10 minutes before</option>
+                            <option value={15}>15 minutes before</option>
+                            <option value={30}>30 minutes before</option>
+                            <option value={60}>1 hour before</option>
+                        </select>
                     </div>
 
                     {/* Status (for editing) */}

@@ -25,18 +25,33 @@ self.addEventListener('activate', (event) => {
 
 // Fetch — network first, fallback to cache
 self.addEventListener('fetch', (event) => {
-    // Skip non-GET and API requests
     if (event.request.method !== 'GET') return;
     if (event.request.url.includes('/api/')) return;
 
     event.respondWith(
         fetch(event.request)
             .then((response) => {
-                // Cache successful responses
                 const clone = response.clone();
                 caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
                 return response;
             })
             .catch(() => caches.match(event.request))
+    );
+});
+
+// Handle notification clicks — open the app
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            for (const client of clientList) {
+                if (client.url.includes(self.location.origin) && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow('/');
+            }
+        })
     );
 });

@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import CalendarPage from './pages/CalendarPage';
 import Dashboard from './pages/Dashboard';
+import { initNotifications } from './utils/notificationManager';
+import { useEffect } from 'react';
 
 function NavBar() {
   return (
@@ -53,13 +55,17 @@ function NavBar() {
           border: isActive ? 'none' : '1px solid rgba(255,255,255,0.06)',
         })}
       >
-        📊 Dashboard
+        📋 Schedule Agenda
       </NavLink>
     </nav>
   );
 }
 
 export default function App() {
+  useEffect(() => {
+    initNotifications();
+  }, []);
+
   return (
     <BrowserRouter>
       <NavBar />

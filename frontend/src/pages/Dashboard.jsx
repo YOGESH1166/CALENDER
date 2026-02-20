@@ -67,7 +67,7 @@ export default function Dashboard() {
         <div className="dashboard">
             {/* === Header === */}
             <div className="dashboard-header">
-                <h1>📊 <span className="dash-accent">Schedule</span> Analytics</h1>
+                <h1>📋 <span className="dash-accent">Schedule</span> Agenda</h1>
                 <div className="header-info">
                     <span className="info-item">Today: <span className="info-value">{todayFormatted}</span></span>
                     <div className="year-selector">

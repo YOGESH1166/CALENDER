@@ -27,16 +27,29 @@ export default function VoiceButton({ onResult }) {
 
         try {
             const recognition = new SpeechRecognition();
+            let fullTranscript = '';
+
             recognition.lang = 'en-US';
-            recognition.interimResults = false;
+            recognition.interimResults = true;
             recognition.maxAlternatives = 1;
-            recognition.continuous = false;
+            recognition.continuous = true;
 
             recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                const parsed = parseVoiceCommand(transcript);
-                onResult?.(parsed, transcript);
-                setListening(false);
+                let currentInterim = '';
+                let currentFinal = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        currentFinal += event.results[i][0].transcript + ' ';
+                    } else {
+                        currentInterim += event.results[i][0].transcript;
+                    }
+                }
+
+                fullTranscript += currentFinal;
+                const totalTranscript = (fullTranscript + currentInterim).trim();
+
+                const parsed = parseVoiceCommand(totalTranscript);
+                onResult?.(parsed, totalTranscript);
                 setError('');
             };
 

@@ -57,6 +57,8 @@ export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedD
                 start_time_h: parsed.startTime || f.start_time_h,
                 end_time_h: parsed.endTime || f.end_time_h,
                 mode: parsed.mode || f.mode,
+                reminder_minutes: parsed.reminder_minutes !== undefined ? parsed.reminder_minutes : f.reminder_minutes,
+                ringtone_id: parsed.ringtone_id !== undefined ? parsed.ringtone_id : f.ringtone_id,
             }));
         }
     };

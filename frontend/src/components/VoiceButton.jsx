@@ -14,7 +14,7 @@ export default function VoiceButton({ onResult }) {
 
     const supported = !!SpeechRecognition;
 
-    const toggle = useCallback(async () => {
+    const toggle = useCallback(() => {
         if (!supported) return;
 
         if (listening) {
@@ -25,46 +25,49 @@ export default function VoiceButton({ onResult }) {
 
         setError('');
 
-        // Explicitly request microphone permission first
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            // Stop the stream immediately — we just needed the permission
-            stream.getTracks().forEach((t) => t.stop());
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            recognition.continuous = false;
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                const parsed = parseVoiceCommand(transcript);
+                onResult?.(parsed, transcript);
+                setListening(false);
+                setError('');
+            };
+
+            recognition.onerror = (e) => {
+                console.error('Speech error:', e.error);
+                setListening(false);
+                if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+                    setError('Open this page in Chrome browser (not installed app) to use voice.');
+                } else if (e.error === 'no-speech') {
+                    setError('No speech heard. Tap Voice and speak.');
+                } else if (e.error === 'network') {
+                    setError('Needs internet for voice.');
+                } else {
+                    setError(`Error: ${e.error}`);
+                }
+            };
+
+            recognition.onend = () => setListening(false);
+
+            recognitionRef.current = recognition;
+            recognition.start();
+            setListening(true);
         } catch (err) {
-            setError('Microphone blocked. Please allow mic access in Settings.');
-            console.error('Mic permission denied:', err);
-            return;
+            setError('Open this page in Chrome browser to use voice.');
+            console.error('SpeechRecognition failed:', err);
         }
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            const parsed = parseVoiceCommand(transcript);
-            onResult?.(parsed, transcript);
-            setListening(false);
-        };
-
-        recognition.onerror = (e) => {
-            console.error('Speech error:', e.error);
-            if (e.error === 'not-allowed') {
-                setError('Mic access denied. Check browser settings.');
-            }
-            setListening(false);
-        };
-        recognition.onend = () => setListening(false);
-
-        recognitionRef.current = recognition;
-        recognition.start();
-        setListening(true);
     }, [listening, supported, onResult]);
 
     if (!supported) {
         return (
-            <button className="voice-btn unsupported" disabled title="Speech recognition not supported in this browser">
+            <button className="voice-btn unsupported" disabled>
                 <span className="voice-icon">🎙️</span>
                 <span className="voice-label">Not Supported</span>
             </button>
@@ -76,12 +79,18 @@ export default function VoiceButton({ onResult }) {
             <button
                 className={`voice-btn ${listening ? 'listening' : ''}`}
                 onClick={toggle}
-                title={listening ? 'Listening… click to stop' : 'Click to speak your schedule'}
             >
                 <span className="voice-icon">{listening ? '🔴' : '🎙️'}</span>
                 <span className="voice-label">{listening ? 'Listening…' : 'Voice'}</span>
             </button>
-            {error && <span style={{ color: 'var(--accent-rose)', fontSize: '0.7rem' }}>{error}</span>}
+            {error && (
+                <span
+                    style={{ color: 'var(--accent-rose)', fontSize: '0.65rem', lineHeight: 1.3, cursor: 'pointer' }}
+                    onClick={() => setError('')}
+                >
+                    {error} <small>(tap to dismiss)</small>
+                </span>
+            )}
         </>
     );
 }

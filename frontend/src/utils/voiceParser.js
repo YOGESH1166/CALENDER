@@ -31,6 +31,8 @@ export function parseVoiceCommand(text) {
         startTime: '',
         endTime: '',
         mode: 'Online',
+        reminder_minutes: undefined,
+        ringtone_id: undefined,
     };
 
     // Detect mode
@@ -54,6 +56,35 @@ export function parseVoiceCommand(text) {
         result.startTime = parseTime(times[0]);
     }
 
+    // Detect reminders
+    const reminderMatch = lowerText.match(/\b(\d+)\s*min/);
+    if (reminderMatch) {
+        result.reminder_minutes = parseInt(reminderMatch[1], 10);
+        // Map to dropdown values
+        if (![5, 10, 15, 30, 60].includes(result.reminder_minutes)) {
+            // Pick closest available
+            const closest = [5, 10, 15, 30, 60].reduce((prev, curr) =>
+                Math.abs(curr - result.reminder_minutes) < Math.abs(prev - result.reminder_minutes) ? curr : prev
+            );
+            result.reminder_minutes = closest;
+        }
+    } else if (lowerText.includes('remind') || lowerText.includes('alarm')) {
+        result.reminder_minutes = 10; // default to 10 min if just "with alarm"
+    }
+
+    // Detect Ringtone hints
+    if (lowerText.includes('classic') || lowerText.includes('bell')) result.ringtone_id = 1;
+    else if (lowerText.includes('gentle') || lowerText.includes('chime')) result.ringtone_id = 2;
+    else if (lowerText.includes('clock')) result.ringtone_id = 3;
+    else if (lowerText.includes('melody') || lowerText.includes('rise')) result.ringtone_id = 4;
+    else if (lowerText.includes('digital') || lowerText.includes('beep')) result.ringtone_id = 5;
+    else if (lowerText.includes('soft') || lowerText.includes('wave')) result.ringtone_id = 6;
+    else if (lowerText.includes('piano') || lowerText.includes('drop')) result.ringtone_id = 7;
+    else if (lowerText.includes('urgent') || lowerText.includes('alert')) result.ringtone_id = 8;
+    else if (lowerText.includes('sparkle')) result.ringtone_id = 9;
+    else if (lowerText.includes('trumpet') || lowerText.includes('call')) result.ringtone_id = 10;
+    else if (lowerText.includes('ringtone') || lowerText.includes('alarm')) result.ringtone_id = 1; // Default
+
     // Extract task description
     // Remove time-related fragments and keywords
     let description = text
@@ -63,7 +94,10 @@ export function parseVoiceCommand(text) {
         .replace(/create\s*(a|an)?\s*/gi, '')
         .replace(/\b(at|from|to|for|about|regarding)\b/gi, ' ')
         .replace(/\d{1,2}(:\d{2})?\s*(am|pm|AM|PM)?/g, '')
+        .replace(/\b(\d+)\s*min(utes)?\s*(before)?\b/gi, '')
         .replace(/\b(online|in-person|in person|offline)\b/gi, '')
+        .replace(/\b(remind\s*me|with\s*alarm|ringtone)\b/gi, '')
+        .replace(/\b(classic|bell|gentle|chime|clock|melody|rise|digital|beep|soft|wave|piano|drop|urgent|alert|sparkle|trumpet|call)\b/gi, '')
         .replace(/\b(meeting|session|appointment|event)\b/gi, (m) => m)
         .replace(/\s{2,}/g, ' ')
         .trim();

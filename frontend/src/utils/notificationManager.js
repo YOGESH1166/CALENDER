@@ -97,19 +97,21 @@ function fireNotification(schedule) {
             navigator.serviceWorker.ready.then((reg) => {
                 reg.showNotification(title, {
                     body,
-                    icon: '/icon.svg',
-                    badge: '/icon.svg',
+                    icon: '/icon-192.png',
+                    badge: '/icon-192.png',
                     tag: schedule.id,
-                    vibrate: [200, 100, 200, 100, 200],
+                    vibrate: [500, 250, 500, 250, 500, 250, 500],
                     requireInteraction: true,
+                    silent: false, // Force system notification sound even if backgrounded
                     data: { url: '/' },
                 });
             });
         } else {
             new Notification(title, {
                 body,
-                icon: '/icon.svg',
+                icon: '/icon-192.png',
                 tag: schedule.id,
+                silent: false,
             });
         }
     } catch (err) {

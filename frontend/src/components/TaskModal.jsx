@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import VoiceButton from './VoiceButton';
 import { getRingtones, previewRingtone } from '../utils/ringtones';
 import './TaskModal.css';
 
@@ -15,7 +14,6 @@ const emptyForm = {
 
 export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedDate, editingSchedule }) {
     const [form, setForm] = useState(emptyForm);
-    const [transcript, setTranscript] = useState('');
     const [confirmDelete, setConfirmDelete] = useState(false);
     const stopPreviewRef = useRef(null);
 
@@ -32,10 +30,8 @@ export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedD
                 reminder_minutes: editingSchedule.reminder_minutes || 0,
                 ringtone_id: editingSchedule.ringtone_id || 1,
             });
-            setTranscript('');
         } else {
             setForm(emptyForm);
-            setTranscript('');
         }
         setConfirmDelete(false);
     }, [editingSchedule, isOpen]);
@@ -47,21 +43,6 @@ export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedD
 
     const handleModeToggle = (mode) =>
         setForm((f) => ({ ...f, mode }));
-
-    const handleVoiceResult = (parsed, raw) => {
-        setTranscript(raw);
-        if (parsed) {
-            setForm((f) => ({
-                ...f,
-                task_name: parsed.taskName || f.task_name,
-                start_time_h: parsed.startTime || f.start_time_h,
-                end_time_h: parsed.endTime || f.end_time_h,
-                mode: parsed.mode || f.mode,
-                reminder_minutes: parsed.reminder_minutes !== undefined ? parsed.reminder_minutes : f.reminder_minutes,
-                ringtone_id: parsed.ringtone_id !== undefined ? parsed.ringtone_id : f.ringtone_id,
-            }));
-        }
-    };
 
     const handleSubmit = () => {
         if (!form.task_name || !form.start_time_h || !form.end_time_h) return;
@@ -112,17 +93,6 @@ export default function TaskModal({ isOpen, onClose, onSave, onDelete, selectedD
                 </p>
 
                 <div className="modal-body">
-                    {/* Voice Input */}
-                    <div className="voice-row">
-                        <VoiceButton onResult={handleVoiceResult} />
-                        <span className="voice-hint">
-                            Say: "Meeting at 10 AM to 11 AM for Project Review"
-                        </span>
-                    </div>
-
-                    {transcript && (
-                        <div className="voice-transcript">🗣️ "{transcript}"</div>
-                    )}
 
                     {/* Task Name */}
                     <div className="form-group">
